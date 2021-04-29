@@ -16,10 +16,12 @@
             padding: 0px
         }
 
-        .navbar {}
+        div.content > div.content {
+            /* font-weight: 500; */
+        }
 
         #content {
-            font-size: 2em;
+            /* font-size: 2em; */
             margin: 3px;
             text-align: center;
         }
@@ -41,8 +43,8 @@
             display: none;
         }
 
-        .card-body {
-            font-size: small;
+        .card-header {
+            text-align: center;
         }
     </style>
 </head>
@@ -64,7 +66,7 @@
             </div>
         </div>
     </nav>
-    <div id="content">
+    <div class="content" id="content">
         <div class="screen" id="home"> Home page content </div>
         <div class="screen" id="form">
 
@@ -77,9 +79,14 @@
         </div>
         <div class="screen" id="data"> Data
             <div class="card template">
-                <div class="card-body">
-                    Did it Worked.
+                <div class="card-header">
+                    Featured
                 </div>
+                <ul class="list-group list-group-flush" style="font-size: 1rem;">
+                    <li class="list-group-item">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
             </div>
         </div>
         <div class="screen" id="map"> Map </div>
@@ -111,7 +118,7 @@
 
 
 
-                    let h5 = clone.querySelector(".card-body");
+                    let h5 = clone.querySelector(".card-header");
 
                     console.log(data);
 
