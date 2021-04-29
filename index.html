@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>My App Shell</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <style>
+        .nav-link {
+            font-size: 1em;
+            padding: 0px
+        }
+
+        .navbar {}
+
+        #content {
+            font-size: 2em;
+            margin: 3px;
+            text-align: center;
+        }
+
+        .screen {
+            display: none;
+            font-size: x-large;
+        }
+
+        .screen:target {
+            display: block;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        .template {
+            display: none;
+        }
+
+        .card-body {
+            font-size: small;
+        }
+    </style>
+</head>
+
+
+<body>
+    <nav class="navbar navbar-expand sticky-top navbar-dark bg-dark">
+        <div class="container-fluid ">
+            <button class="navbar-toggler " type="button" data-bs-toggle="collapse" data-bs-target="#nav-bar"
+                aria-controls="nav-bar" aria-expanded="true" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon "></span>
+            </button>
+            <div class="collapse navbar-collapse " id="nav-bar">
+                <a data-toggle="tab" class="nav-link active mx-auto" aria-current="page" href="#home">Home</a>
+                <a class="nav-link mx-auto" href="#form">Form</a>
+                <a class="nav-link mx-auto" href="#data">Data</a>
+                <a class="nav-link mx-auto" href="#map">Map</a>
+                <a class="nav-link mx-auto" href="#about">About</a>
+            </div>
+        </div>
+    </nav>
+    <div id="content">
+        <div class="screen" id="home"> Home page content </div>
+        <div class="screen" id="form">
+
+            Form
+            <form>
+                <input type="text" id="permit_type" placeholder="enter the permit type">
+            </form>
+            <button id="search"> Search </button>
+
+        </div>
+        <div class="screen" id="data"> Data
+            <div class="card template">
+                <div class="card-body">
+                    Did it Worked.
+                </div>
+            </div>
+        </div>
+        <div class="screen" id="map"> Map </div>
+        <div class="screen" id="about"> About Page </div>
+    </div>
+    <!-- <script>
+        window.onload = (() => {
+            document.querySelector(".nav-link").click();
+        });
+    </script> -->
+
+    <script>
+        let endpoint = "https://data.cityofchicago.org/resource/ydr8-5enu.json";
+        let url = endpoint + "?";
+        let temp = document.querySelector(".template");
+
+
+
+        fetch(endpoint)
+            .then((res) => { return res.json() })
+            .then((data) => {
+
+
+                data.forEach((item) => {
+
+
+
+                    let clone = temp.cloneNode(true);
+
+
+
+                    let h5 = clone.querySelector(".card-body");
+
+                    console.log(data);
+
+
+                    h5.innerText = item.contact_1_name;
+
+                    console.log(item.contact_1_name);
+
+                    temp.parentElement.append(clone);
+
+                    clone.classList.remove("template");
+
+
+
+                })
+
+            });
+    </script>
+
+    <!--     <script>
+        let navAnchors = document.querySelectorAll("div.nav-link a");
+        navAnchors.forEach((anchor) => {
+            anchor.addEventListener("click", (event) => {
+                document.querySelectorAll(".screen").forEach((screen) => {
+                    screen.style.display = "none";
+                });
+                // read screen attribute
+                let target = event.target.getAttribute("id");
+                // find target screen
+                let targetScreen = document.querySelector("#" + target);
+                targetScreen.setAttribute("class", "nav-link active");
+                // show it
+                targetScreen.style.display = "block";
+            })
+        });
+    </script> -->
+</body>
+
+</html>
