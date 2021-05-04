@@ -41,10 +41,11 @@ class InstantSearch {
       const query = this.elements.input.value;
 
       delay = setTimeout(() => {
-        if (query.length < 3) {
+        if (query.length < 1) {
           this.populateResults([]);
           return;
         }
+        console.log(query);
 
         this.performSearch(query).then((results) => {
           this.populateResults(results);
@@ -78,8 +79,10 @@ class InstantSearch {
       );
     }
 
+    // console.log(results);
+
     // Update list of results under the search bar
-    for (const result of results) {
+    for (const result of Object.entries(results)) {
       this.elements.resultsContainer.appendChild(
         this.createResultElement(result)
       );
@@ -116,9 +119,17 @@ class InstantSearch {
    * @returns {Promise<Object[]>}
    */
   performSearch(query) {
-    const url = new URL(this.options.searchUrl.toString());
+    let url = new URL(this.options.searchUrl.toString());
+
+
+    // console.log(url.searchParams);
+
 
     url.searchParams.set(this.options.queryParam, query);
+
+    url = url.href;
+
+    // console.log(url);
 
     this.setLoading(true);
 
@@ -133,6 +144,8 @@ class InstantSearch {
         return response.json();
       })
       .then((responseData) => {
+
+        
         console.log(responseData);
 
         return this.options.responseParser(responseData);
@@ -145,7 +158,13 @@ class InstantSearch {
       .finally((results) => {
         this.setLoading(false);
 
+        results = JSON.parse(results);
+
+
         return results;
+        
+
+        
       });
   }
 

@@ -5,13 +5,28 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>My App Shell</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    "
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css\instant-search.css">
+
+    <script src="js\search.js" type="module"></script>
+
+
+    <script>
+        var vars = {
+            keyList: []
+        };
+    </script>
+
+
+
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+
+
     <style>
         .nav-link {
             font-size: 1em;
@@ -31,6 +46,8 @@
         .screen {
             display: none;
             font-size: x-large;
+            padding-top: 1em;
+
         }
 
         .screen:target {
@@ -38,7 +55,11 @@
         }
 
         body {
-            margin: 0;
+            margin: 0 auto;
+        }
+
+        div.container {
+            padding-block-start: 1em;
         }
 
         .template {
@@ -53,6 +74,7 @@
 
 
 <body>
+
     <nav class="navbar navbar-expand sticky-top navbar-dark bg-dark">
         <div class="container-fluid ">
             <button class="navbar-toggler " type="button" data-bs-toggle="collapse" data-bs-target="#nav-bar"
@@ -68,17 +90,25 @@
             </div>
         </div>
     </nav>
+
     <div class="content" id="content">
         <div class="screen" id="home"> Home page content </div>
+
         <div class="screen" id="form">
 
             Form
-            <form>
-                <input type="text" id="permit_type" placeholder="enter the permit type">
+
+
+            <form id="aform">
+                <select id="dropdown">
+                    <option value="" disabled selected>Select</option>
+
+                </select>
             </form>
-            <button id="search"> Search </button>
+
 
         </div>
+
         <div class="screen" id="data"> Data
             <div class="card template">
                 <div class="card-header">
@@ -94,49 +124,29 @@
         <div class="screen" id="map"> Map </div>
         <div class="screen" id="about"> About Page </div>
     </div>
-    <!-- <script>
-        window.onload = (() => {
-            document.querySelector(".nav-link").click();
-        });
-    </script> -->
 
     <script>
         let endpoint = "https://data.cityofchicago.org/resource/ydr8-5enu.json";
         let url = endpoint + "?";
         let temp = document.querySelector(".template");
-
-
+        // var filtered;
 
         fetch(endpoint)
             .then((res) => { return res.json() })
             .then((data) => {
 
-
+                // vars.keyList = (Object.keys(data[0]));
                 data.forEach((item) => {
 
-
-
                     let clone = temp.cloneNode(true);
+                    let h1 = clone.querySelector(".card-header");
 
+                    h1.innerText = item.contact_1_name;
 
-
-                    let h5 = clone.querySelector(".card-header");
-
-                    console.log(data);
-
-
-                    h5.innerText = item.contact_1_name;
-
-                    console.log(item.contact_1_name);
-
+                    // console.log(item.contact_1_name);
                     temp.parentElement.append(clone);
-
                     clone.classList.remove("template");
-
-
-
                 })
-
             });
     </script>
 
