@@ -2,6 +2,11 @@ var select = document.querySelector("#dropdown");
 const enCollator = new Intl.Collator('en');
 const comparator = enCollator.compare;
 
+var keyList = [];
+var nameList = [];
+
+const options = []
+
 
 // init select
 window.addEventListener('load', function () {
@@ -10,10 +15,23 @@ window.addEventListener('load', function () {
         .then((res) => { return res.json() })
         .then((data) => {
 
-            vars.keyList = (Object.keys(data[20]));
+
+            data.forEach((item) => {
+
+                if (!nameList.includes(item.contact_1_name))
+                    nameList.push(item.contact_1_name);
+            })
+
+            document.querySelectorAll('#dropdown > option').forEach((option) => {
+                if (options.includes(option.value)) option.remove()
+                else options.push(option.value)
+            })
 
 
-            vars.keyList.forEach(function (item) {
+            // keyList = (Object.keys(data[20]));
+
+
+            nameList.forEach(function (item) {
                 const optionObj = document.createElement("option");
                 optionObj.textContent = item;
                 select.appendChild(optionObj);
@@ -23,6 +41,8 @@ window.addEventListener('load', function () {
 
             optionNodes.sort((a, b) => comparator(a.textContent, b.textContent));
             optionNodes.forEach((option) => select.appendChild(option));
+
+
 
         });
 
