@@ -1,59 +1,52 @@
+const endpoint = "https://data.cityofchicago.org/resource/ydr8-5enu.json";
+const url = endpoint + "?";
+
 var select = document.querySelector("#dropdown");
+let data = document.querySelector('#data');
+
 const enCollator = new Intl.Collator('en');
 const comparator = enCollator.compare;
 
-var keyList = [];
-var nameList = [];
-
-const options = []
+let nameList = [];
+let options = [];
 
 
 // init select
-window.addEventListener('load', function () {
+data.addEventListener('click', function () {
 
     fetch(endpoint)
         .then((res) => { return res.json() })
         .then((data) => {
-
 
             data.forEach((item) => {
 
                 if (!nameList.includes(item.contact_1_name))
                     nameList.push(item.contact_1_name);
             })
-
-            document.querySelectorAll('#dropdown > option').forEach((option) => {
-                if (options.includes(option.value)) option.remove()
-                else options.push(option.value)
-            })
-
-
-            // keyList = (Object.keys(data[20]));
-
-
-            nameList.forEach(function (item) {
-                const optionObj = document.createElement("option");
-                optionObj.textContent = item;
-                select.appendChild(optionObj);
-            });
-
-            const optionNodes = Array.from(select.children);
-
-            optionNodes.sort((a, b) => comparator(a.textContent, b.textContent));
-            optionNodes.forEach((option) => select.appendChild(option));
-
-
-
         });
 
 
-    // const options = vars.keyList;
-    // const selectEls = document.querySelectorAll('.js-select');
+    nameList.forEach ((name) => {
+        let optionObj = document.createElement("option");
+        optionObj.textContent = name;
+        select.appendChild(optionObj);
+    });
 
-    // selectEls.forEach((el) => {
-    //     new Select(el, options);
-    // });
+
+    // document.querySelectorAll('#dropdown > option').forEach((option) => {
+    //     if (options.includes(option.value)) option.remove()
+    //     else options.push(option.value)
+    // })
+
+    let optionNodes = Array.from(select.children);
+
+    optionNodes.sort((a, b) => comparator(a.textContent, b.textContent));
+    optionNodes.forEach((option) => select.appendChild(option));
+
 });
+
+
+
 
 // window.addEventListener('load', function sortSelect(selElem) {
 

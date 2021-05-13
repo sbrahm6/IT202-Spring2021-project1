@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width">
     <title>My App Shell</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="css\instant-search.css">
 
     <script src="js\search.js" type="module"></script>
 
@@ -17,19 +16,28 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script src="js/index.js"></script>
+
+
 
     <style>
         .nav-link {
-            font-size: 1em;
+            font-size: 1rem;
             padding: 0px
         }
 
-        /* div.content>div.content {
-            font-weight: 500;
-        } */
+        body,
+        div,
+        form,
+        strong,
+        p {
+            margin: 0 auto;
+            text-align: center;
+        }
 
         #content {
-            /* font-size: 2em; */
             margin: 3px;
             text-align: center;
         }
@@ -37,27 +45,28 @@
         .screen {
             display: none;
             font-size: large;
-            padding-top: 1em;
-
+            text-align: center;
         }
 
         .screen:target {
             display: block;
         }
 
-        body {
-            margin: 0 auto;
-        }
-
-        div.container {
-            padding-block-start: 1em;
-        }
-
-        .template {
+        .card {
             display: none;
+            width: 75%;
+        }
+
+        .results {
+            display: block;
         }
 
         .card-header {
+            text-align: center;
+            font-size: medium;
+        }
+
+        .list-group {
             text-align: center;
         }
     </style>
@@ -82,66 +91,137 @@
         </div>
     </nav>
 
+
     <div class="content" id="content">
-        <div class="screen" id="home"> Home page content </div>
+
+        <div class="screen" id="home"> <strong>Home Page</strong> </div>
+
 
         <div class="screen" id="form">
 
-            Form
-
+            <strong>Data Filter</strong>
 
             <form id="aform">
-                <select id="dropdown">
-                    <option value="" disabled selected>Search Names</option>
-
+                <select id="dropdown" onchange="filter()">
+                    <option value="placeholder" disabled selected>Search Names</option>
                 </select>
             </form>
 
 
-        </div>
-
-        <div class="screen" id="data"> Data
-            <div class="card template">
-                <div class="card-header">
-                    Featured
+            <div class="col-sm-12">
+                <div class="card template">
+                    <div class="card-body">
+                        <h5 class="card-title">Placeholder</h5>
+                        <ul id="list" class="list-group list-group-flush" style="font-size: small;"></ul>
+                    </div>
                 </div>
-                <ul class="list-group list-group-flush" style="font-size: 1rem;">
-                    <li class="list-group-item">Cras justo odio</li>
-                    <li class="list-group-item">Dapibus ac facilisis in</li>
-                    <li class="list-group-item">Vestibulum at eros</li>
-                </ul>
             </div>
+
+
+            <script>
+                function filter() {
+
+                    var results = document.querySelectorAll('.results');
+
+                    results.forEach((e) => { e.remove() });
+
+                    let select = document.querySelector("#dropdown");
+                    let selection = encodeURI(select.value);
+
+                    console.log(selection);
+
+                    let url = endpoint + "?contact_1_name" + "=" + selection;
+
+                    console.log(url);
+
+                    var temp = document.querySelector(".template");
+
+                    fetch(url)
+                        .then((res) => {
+                            return res.json()
+                        })
+                        .then((data) => {
+                            data.forEach((item) => {
+                                let clone = temp.cloneNode(true);
+                                let br = document.createElement("br");
+                                br.classList.add('results');
+
+                                let h1 = clone.querySelector(".card-title");
+                                h1.innerText = item.contact_1_name;
+
+                                let list = clone.querySelector("#list");
+                                let addr = [item.street_number, item.street_direction, item.street_name, item.suffix, item.contact_1_city, item.contact_1_state, item.contact_1_zipcode].join(' ');
+                                let info = ["Address: " + addr, "Pin: " + item.pin1, "Community Area: " + item.community_area, "Coordinates: " + `[${item.xcoordinate},${item.ycoordinate}]`];
+
+                                for (k in info) {
+                                    let listItem = document.createElement("li");
+                                    listItem.innerText = (info[k]);
+                                    list.append(listItem);
+                                    listItem.classList.add("list-group-item");
+                                }
+
+                                temp.parentElement.appendChild(br);
+                                temp.parentElement.appendChild(clone);
+                                clone.classList.remove("template");
+                                clone.classList.add("results");
+                            });
+                        });
+                }
+            </script>
+
         </div>
-        <div class="screen" id="map"> Map </div>
-        <div class="screen" id="about"> About Page </div>
-    </div>
 
-    <script>
-        let endpoint = "https://data.cityofchicago.org/resource/ydr8-5enu.json";
-        let url = endpoint + "?";
-        let temp = document.querySelector(".template");
-        // var filtered;
+        <div class="screen" id="about"> <strong>About Page</strong>
 
-        fetch(endpoint)
-            .then((res) => { return res.json() })
-            .then((data) => {
+            <p><br></p>
+            <p>This is a rudimentary webpage that allows the user to filter Land Plot Data for the City of Chicago.
+            </p>
+            <p><br>The Form page filters the relevant data indicated by the name selection. It outputs cards with
+                every
+                dataset associated with the selected name, with dropdown options provided in aplhabetical order. The
+                cards contain a list of the most essential information such as address and even exact coordinates.
+            </p>
 
-                // vars.keyList = (Object.keys(data[0]));
-                data.forEach((item) => {
+        </div>
 
-                    let clone = temp.cloneNode(true);
-                    let h1 = clone.querySelector(".card-header");
 
-                    h1.innerText = item.contact_1_name;
+        <div class="screen" id="map">
 
-                    // console.log(item.contact_1_name);
-                    temp.parentElement.append(clone);
-                    clone.classList.remove("template");
-                })
-            });
-    </script>
+            <div id="map-wrapper">
+                <div id="map-canvas"></div>
+            </div>
+            <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+            <script async
+                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkr4zEzGfBhNPoLP-6uFdsVfPIQ3FjkDw&callback=initMap">
+                </script>
+        </div>
 
-    <!--     <script>
+
+        <script>
+            let endpoint = "https://data.cityofchicago.org/resource/ydr8-5enu.json";
+            let temp = document.querySelector(".template");
+            // var filtered;
+
+            // fetch(endpoint)
+            //     .then((res) => { return res.json() })
+            //     .then((data) => {
+
+            //         // vars.keyList = (Object.keys(data[0]));
+            //         data.forEach((item) => {
+
+            //             let clone = temp.cloneNode(true);
+            //             let h1 = clone.querySelector(".card-title");
+
+            //             h1.innerText = item.contact_1_name;
+
+            //             // console.log(item.contact_1_name);
+            //             temp.parentElement.append(clone);
+            //             clone.classList.remove("template");
+            //         })
+            //     });
+        </script>
+
+        <!--     <script>
         let navAnchors = document.querySelectorAll("div.nav-link a");
         navAnchors.forEach((anchor) => {
             anchor.addEventListener("click", (event) => {
