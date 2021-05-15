@@ -23,12 +23,15 @@ window.addEventListener('load', function () {
         .then((data) => {
 
             // console.log(data);
+            let divData = document.createElement("div");
 
 
             data.forEach((item) => {
 
 
-                if (!nameList.includes(item.contact_1_name) && item.contact_1_name != undefined) {
+                if (!(nameList.includes(item.contact_1_name)) && (item.contact_1_name != undefined)) {
+
+                    // console.log(nameList)
 
                     let addr = [item.street_number, item.street_direction, item.street_name, item.suffix, item.contact_1_city, item.contact_1_state, item.contact_1_zipcode].join(' ');
                     let info = ["Address: " + addr, "Pin: " + item.pin1, "Community Area: " + item.community_area, "Coordinates: " + `[${item.xcoordinate},${item.ycoordinate}]`];
@@ -40,52 +43,56 @@ window.addEventListener('load', function () {
                     let br = document.createElement("br");
                     br.classList.add('results');
 
-                    let h1 = clone.querySelector(".card-title");
-                    h1.innerText = item.contact_1_name;
+                    let h5 = clone.querySelector(".card-title");
+                    h5.innerText = item.contact_1_name;
 
-                    let name = item.contact_1_name.replace(/[. ,/&]/g, "");
+                    let name = item.contact_1_name.replace(/[. ,/&]/g, ""); //for valid class name adding
 
                     let list = clone.querySelector("#list");
                     let listItem = document.createElement("li");
-                    listItem.innerText = (info[0]);
-                    list.append(listItem);
+                    listItem.innerText = (addr);
                     listItem.classList.add("list-group-item");
-                    listItem.parentElement.classList.add(name);
+                    listItem.classList.add(name);
+                    list.append(listItem);
 
-
-                    let allData = document.querySelector("#allData");
-                    allData.appendChild(br);
-                    allData.appendChild(clone);
+                    // let allData = document.querySelector("#allData");
+                    divData.appendChild(br);
+                    divData.appendChild(clone);
                     clone.classList.remove("template");
                     clone.classList.add("allData");
 
                 } else if (nameList.includes(item.contact_1_name) && item.contact_1_name != undefined) {
 
+
                     let addr = [item.street_number, item.street_direction, item.street_name, item.suffix, item.contact_1_city, item.contact_1_state, item.contact_1_zipcode].join(' ');
-                    let info = ["Address: " + addr, "Pin: " + item.pin1, "Community Area: " + item.community_area, "Coordinates: " + `[${item.xcoordinate},${item.ycoordinate}]`];
-
-                    let listItem = document.createElement("li");
-                    listItem.innerText = (info[0]);
-                    listItem.classList.add("list-group-item");
-
-                    let name = item.contact_1_name.replace(/[. ,/&]/g, "");
 
 
-                    let list = document.querySelector("." + name);
+                    let name = item.contact_1_name.replace(/[. ,/&]/g, ""); //for valid class name adding
 
-                    // console.log(list);
-                    for (let i = 0; i < 3; i++) {
-                        if (list.childNodes[i].innerText != listItem.innerText) {
-                            list.append(listItem);
+                    let list = divData.querySelectorAll("." + name);
+                    let included = false;
+                    for (let i = 0; i < list.length; i++) {
+                        if (list[i].innerText == addr) {
+                            included = true;
                         }
 
-                        //     if (this.innerText == listItem.innerText) {
-                        //         break;
-                        //     }
-                        //     else list.appendChild(listItem);
+                    }
+
+                    if (included == false) {
+                        let listItem = document.createElement("li");
+                        listItem.innerText = addr;
+                        listItem.classList.add("list-group-item");
+                        listItem.classList.add(name);
+                        console.log(list[0].parentElement);
+
+                        list[0].parentElement.append(listItem);
                     }
                 }
-            })
+            });
+
+            let allData = document.querySelector("#allData");
+            
+            allData.appendChild(divData);
 
 
             nameList.forEach((name) => {

@@ -148,8 +148,8 @@
                                 let br = document.createElement("br");
                                 br.classList.add('results');
 
-                                let h1 = clone.querySelector(".card-title");
-                                h1.innerText = item.contact_1_name;
+                                let h5 = clone.querySelector(".card-title");
+                                h5.innerText = item.contact_1_name;
 
                                 let list = clone.querySelector("#list");
                                 let addr = [item.street_number, item.street_direction, item.street_name, item.suffix, item.contact_1_city, item.contact_1_state, item.contact_1_zipcode].join(' ');
@@ -212,9 +212,9 @@
             //         data.forEach((item) => {
 
             //             let clone = temp.cloneNode(true);
-            //             let h1 = clone.querySelector(".card-title");
+            //             let h5 = clone.querySelector(".card-title");
 
-            //             h1.innerText = item.contact_1_name;
+            //             h5.innerText = item.contact_1_name;
 
             //             // console.log(item.contact_1_name);
             //             temp.parentElement.append(clone);
