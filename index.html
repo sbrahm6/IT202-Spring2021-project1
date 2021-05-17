@@ -104,7 +104,7 @@
                 <span class="navbar-toggler-icon "></span>
             </button>
             <div class="collapse navbar-collapse " id="nav-bar">
-                <a data-toggle="tab" class="nav-link active mx-auto" aria-current="page" href="#home">Home</a>
+                <a class="nav-link mx-auto" aria-current="page" href="#home">Home</a>
                 <a class="nav-link mx-auto" href="#data">Data</a>
                 <a class="nav-link mx-auto" href="#form">Form</a>
                 <a class="nav-link mx-auto" href="#map">Map</a>
@@ -115,7 +115,27 @@
 
     <div class="content" id="content">
 
-        <div class="screen" id="home" tabindex="0"> <strong>Home Page</strong> </div>
+        <div class="screen" id="home" onLoad="home.focus()"> <strong>Home Page</strong>
+            <p><br></p>
+            <h5>Welcome to Sid's Data filtering and visualization page!
+            </h5>
+            <p><br>Use the navbar at the top of the page to go to the desired section. This page is designed so that all
+                elements are hidden except for the one the user has in focus, essentially hiding and showing elements
+                dynamically.
+                The data page is static and aggregates the addresses into a list, neatly within a card of the unique
+                associated name.<br>
+                The main area of interest is the Form section, where there is a select (dropdown) input with
+                keys (names obtained directly from JSON data src) listed in aplhabetical order
+                and with duplicates removed. Once selected two things happen. First, the data is parsed and the user
+                is presented with a card list containing the relevant data associated with the selected name. <br>
+                Second, the map element generates markers with info windows at all locations listed under the name,
+                by using obtained geolocation data (latitude/longitude). The info windows open one at a time,
+                automatically
+                closing a previously opened window before opening a new one in order to reduce clutter.
+
+
+            </p>
+        </div>
 
         <div class="screen" id="data">
             <strong>Data Page</strong>
@@ -169,7 +189,7 @@
             </p>
         </div>
 
-        <div class="screen" id="map" style="display: block">
+        <div class="screen" id="map">
             <div id="map-wrapper">
                 <div id="map-canvas"></div>
             </div>
@@ -376,6 +396,7 @@
 
     const temp = document.querySelector(".template");
     const select = document.querySelector("#dropdown");
+    const home = document.querySelector('#home');
 
     const data = document.querySelector('#data');
 
@@ -387,8 +408,7 @@
 
     // init select
     window.addEventListener('load', function () {
-        // let home = document.querySelector("#home");
-        // home.focus();
+
 
         fetch(endpoint + "?$LIMIT=500")
             .then((res) => { return res.json() })
@@ -412,7 +432,7 @@
                         let h5 = clone.querySelector(".card-title");
                         h5.innerText = item.contact_1_name;
 
-                        let name = item.contact_1_name.replace(/[. ,/&]/g, ""); //for valid class name adding
+                        let name = item.contact_1_name.replace(/[. ,/&]/g, ""); //removes non-aplhanumeric for valid class name adding
 
                         let list = clone.querySelector("#list");
                         let listItem = document.createElement("li");
@@ -428,7 +448,7 @@
 
                     } else if (nameList.includes(item.contact_1_name) && item.contact_1_name != undefined) {
                         let addr = [item.street_number, item.street_direction, item.street_name, item.suffix, item.contact_1_city, item.contact_1_state, item.contact_1_zipcode].join(' ');
-                        let name = item.contact_1_name.replace(/[. ,/&]/g, ""); //for valid class name adding
+                        let name = item.contact_1_name.replace(/[. ,/&]/g, ""); //removes non-aplhanumeric for valid class name adding
                         let list = divData.querySelectorAll("." + name);
                         let included = false;
                         for (let i = 0; i < list.length; i++) {
@@ -464,6 +484,8 @@
                 options.sort((a, b) => comparator(a.textContent, b.textContent));
                 options.forEach((option) => select.appendChild(option));
             });
+        home.focus();
+
     });
 
 </script>
