@@ -1,12 +1,57 @@
 /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
+
 #map {
   height: 768px;
 }
 
 /* Optional: Makes the sample page fill the window. */
+
 #map-wrapper, #map-canvas {
-    margin: 0 auto;
-    padding: 0;
-    height: 768px;
+  margin: 0 auto;
+  padding: 0;
+  height: 768px;
+}
+
+.nav-link {
+  font-size: 1rem;
+  padding: 0px;
+}
+
+body, div, form, strong, p {
+  margin: 0 auto;
+  text-align: center;
+}
+
+#content {
+  margin: 3px;
+  text-align: center;
+}
+
+.screen {
+  display: none;
+  font-size: large;
+  text-align: center;
+}
+
+.screen:target {
+  display: block;
+}
+
+.card {
+  display: none;
+  width: 75%;
+}
+
+.results, .allData {
+  display: block;
+}
+
+.card-header {
+  text-align: center;
+  font-size: medium;
+}
+
+.list-group {
+  text-align: center;
 }

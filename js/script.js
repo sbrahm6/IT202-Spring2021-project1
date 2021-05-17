@@ -11,6 +11,8 @@ let nameList = new Array();
 let options = new Array();
 
 
+
+
 // init select
 window.addEventListener('load', function () {
     // let home = document.querySelector("#home");

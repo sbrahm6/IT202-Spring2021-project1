@@ -7,7 +7,7 @@
     <title>My App Shell</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <script src="js\script.js" type="module"></script>
+    <!-- <script src="js\script.js" type="module"></script> -->
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.2/proj4.js"
         integrity="sha512-xDJcBRHFtyIAwCxC+w+BUE8S20UdKmyHA/ZoHKZ9zgwSfQQxdgCH/5Q0i9qrsBJFZQRjy1tSmqw8VGlrEy85MQ=="
@@ -25,11 +25,25 @@
 
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <script src="js/map.js"></script>
-
-
+    <!-- <script src="js/map.js"></script> -->
 
     <style>
+        /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+
+        #map {
+            height: 768px;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+
+        #map-wrapper,
+        #map-canvas {
+            margin: 0 auto;
+            padding: 0;
+            height: 768px;
+        }
+
         .nav-link {
             font-size: 1rem;
             padding: 0px;
@@ -99,30 +113,38 @@
         </div>
     </nav>
 
-
     <div class="content" id="content">
 
         <div class="screen" id="home" tabindex="0"> <strong>Home Page</strong> </div>
 
-        <div class="screen" id="data"> <strong>Data Page</strong>
-
+        <div class="screen" id="data">
+            <strong>Data Page</strong>
             <div id="allData"></div>
-
-
-
         </div>
 
-
         <div class="screen" id="form">
-
             <strong>Data Filter</strong>
-
             <form id="aform">
                 <select id="dropdown" onchange="filter()">
                     <option value="placeholder" disabled selected>Search Names</option>
                 </select>
             </form>
 
+            <div id="boxes">
+
+                <!-- <form>
+                    <label class="checkbox-inline">
+                        <input id="0" type="checkbox" onchange="filter()">Address
+                    </label>
+                    <label class="checkbox-inline">
+                        <input id="1" type="checkbox" onchange="filter()">Pin
+                    </label>
+                    <label class="checkbox-inline">
+                        <input id="2" type="checkbox" onchange="filter()">Coordinates
+                    </label>
+                </form> -->
+
+            </div>
 
             <div class="col-sm-12">
                 <div class="card template">
@@ -134,106 +156,9 @@
                 </div>
             </div>
 
-
-            <script>
-                let map;
-                let markers = [];
-                let lats = [];
-                let lngs = [];
-                let addrArr = [];
-                let x, y;
-
-
-                function filter() {
-
-                    deleteMarkers();
-                    markers = [];
-                    lats = [];
-                    lngs = [];
-                    addrArr = [];
-                    x, y;
-
-
-                    var results = document.querySelectorAll('.results');
-
-                    results.forEach((e) => { e.remove() });
-
-                    let select = document.querySelector("#dropdown");
-                    let selection = encodeURI(select.value);
-                    let url = endpoint + "?contact_1_name" + "=" + selection + "&$LIMIT=5";
-                    var temp = document.querySelector(".template");
-
-                    fetch(url)
-                        .then((res) => {
-                            return res.json()
-                        })
-                        .then((data) => {
-
-                            // console.log(data);
-
-
-                            data.forEach((item) => {
-
-                                console.log("----------------------------------------------------");
-
-                                let keys = ["latitude", "longitude", "id"];
-
-                                let validDataOnly = true;
-                                for (let key in keys) {
-                                    if (!item.hasOwnProperty(keys[key])) {
-                                        validDataOnly = false;
-                                        console.log("Missing: " + keys[key])
-                                    }
-                                }
-
-                                console.log("validDataOnly: " + validDataOnly);
-
-                                if (validDataOnly) {
-
-                                    let clone = temp.cloneNode(true);
-                                    let br = document.createElement("br");
-                                    br.classList.add('results');
-
-                                    let h5 = clone.querySelector(".card-title");
-                                    h5.innerText = item.contact_1_name;
-
-                                    let list = clone.querySelector("#list");
-                                    x = parseFloat(Math.round(`${item.latitude}` * 1000) / 1000);
-                                    y = parseFloat(Math.round(`${item.longitude}` * 1000) / 1000);
-
-                                    let addr = [item.street_number, item.street_direction, item.street_name, item.suffix, item.contact_1_city, item.contact_1_state, item.contact_1_zipcode].join(' ');
-                                    let info = ["Address: " + addr, "Pin: " + item.pin1, "Community Area: " + item.community_area, "Coordinates: " + `[${x},${y}]`];
-
-                                    for (k in info) {
-                                        let listItem = document.createElement("li");
-                                        listItem.innerText = (info[k]);
-                                        list.append(listItem);
-                                        listItem.classList.add("list-group-item");
-                                    }
-
-                                    temp.parentElement.appendChild(br);
-                                    temp.parentElement.appendChild(clone);
-                                    clone.classList.remove("template");
-                                    clone.classList.add("results");
-
-                                    addrArr.push(addr);
-                                    lats.push(x);
-                                    lngs.push(y);
-
-                                }
-
-                            });
-
-                            console.log("Initiating InitMap()");
-                            initMap();
-                        });
-                }
-            </script>
-
         </div>
 
         <div class="screen" id="about"> <strong>About Page</strong>
-
             <p><br></p>
             <p>This is a rudimentary webpage that allows the user to filter Land Plot Data for the City of Chicago.
             </p>
@@ -242,12 +167,9 @@
                 dataset associated with the selected name, with dropdown options provided in aplhabetical order. The
                 cards contain a list of the most essential information such as address and even exact coordinates.
             </p>
-
         </div>
 
-
         <div class="screen" id="map" style="display: block">
-
             <div id="map-wrapper">
                 <div id="map-canvas"></div>
             </div>
@@ -258,29 +180,7 @@
     </div>
 
 
-    <script>
-        let endpoint = "https://data.cityofchicago.org/resource/ydr8-5enu.json";
-        let temp = document.querySelector(".template");
-            // var filtered;
 
-            // fetch(endpoint)
-            //     .then((res) => { return res.json() })
-            //     .then((data) => {
-
-            //         // vars.keyList = (Object.keys(data[0]));
-            //         data.forEach((item) => {
-
-            //             let clone = temp.cloneNode(true);
-            //             let h5 = clone.querySelector(".card-title");
-
-            //             h5.innerText = item.contact_1_name;
-
-            //             // console.log(item.contact_1_name);
-            //             temp.parentElement.append(clone);
-            //             clone.classList.remove("template");
-            //         })
-            //     });
-    </script>
 
     <!--     <script>
         let navAnchors = document.querySelectorAll("div.nav-link a");
@@ -300,5 +200,274 @@
         });
     </script> -->
 </body>
+
+<script>     //Map script
+    function initMap() {
+
+        map = new google.maps.Map(document.querySelector('#map-canvas'), {
+            zoom: 9,
+            center: {
+                lat: lats[0],
+                lng: lngs[0]
+            }
+        });
+
+        let infowindow, contentString;
+        for (let i in lats) {
+            let lat = lats[i];
+            let lng = lngs[i];
+            let marker = new google.maps.Marker({
+
+                position: new google.maps.LatLng(lat, lng),
+                map: map,
+                title: "MyMap"
+            });
+
+            markers.push[marker];
+            google.maps.event.addListener(marker, 'click', () => {
+                console.log("Opened InfoWindow!");
+                if (infowindow) {
+                    infowindow.close();
+                }
+                contentString = '<div id="content">' + addrArr[i] + "</div>";
+
+                infowindow = new google.maps.InfoWindow({
+                    content: contentString
+                });
+                infowindow.open(map, marker);
+            });
+
+        }
+        console.log("All Markers Added");
+    }
+
+    // Sets the map on all markers in the array.
+    function setMapOnAll(map) {
+        for (let j = 0; j < markers.length; j++) {
+            markers[j].setMap(map);
+        }
+    }
+
+    // Removes the markers from the map, but keeps them in the array.
+    function clearMarkers() {
+        setMapOnAll(null);
+    }
+
+    // Shows any markers currently in the array.
+    function showMarkers() {
+        setMapOnAll(map);
+    }
+
+    // Deletes all markers in the array by removing references to them.
+    function deleteMarkers() {
+        clearMarkers();
+        markers = [];
+    }</script>
+
+
+
+<script>
+    let map;
+    let markers = [];
+    let lats = [];
+    let lngs = [];
+    let addrArr = [];
+    let x, y;
+
+    function showData(item) {
+
+        let clone = temp.cloneNode(true);
+        let br = document.createElement("br");
+        br.classList.add('results');
+
+        let h5 = clone.querySelector(".card-title");
+        h5.innerText = item.contact_1_name;
+
+        let list = clone.querySelector("#list");
+        x = parseFloat(Math.round(`${item.latitude}` * 1000) / 1000);
+        y = parseFloat(Math.round(`${item.longitude}` * 1000) / 1000);
+
+        let addr = [item.street_number, item.street_direction, item.street_name, item.suffix, item.contact_1_city, item.contact_1_state, item.contact_1_zipcode].join(' ');
+        let info = ["Address: " + addr, "Pin: " + item.pin1, "Community Area: " + item.community_area, "Coordinates: " + `[${x},${y}]`];
+
+        for (k in info) {
+
+            let box = document.getElementById(k);
+
+            if (/*box.checked == */ true) {
+
+                console.log("checked")
+
+                let listItem = document.createElement("li");
+                listItem.innerText = (info[k]);
+                list.append(listItem);
+                listItem.classList.add("list-group-item");
+            }
+        }
+
+        temp.parentElement.appendChild(br);
+        temp.parentElement.appendChild(clone);
+        clone.classList.remove("template");
+        clone.classList.add("results");
+
+        addrArr.push(addr);
+        lats.push(x);
+        lngs.push(y);
+    }
+
+    function filter() {
+
+        deleteMarkers();
+        markers = [];
+        lats = [];
+        lngs = [];
+        addrArr = [];
+        x, y;
+
+        var results = document.querySelectorAll('.results');
+
+        results.forEach((e) => { e.remove() });
+
+        // let select = document.querySelector("#dropdown");
+        let selection = encodeURI(select.value);
+        let url = endpoint + "?contact_1_name" + "=" + selection + "&$LIMIT=10";
+
+        fetch(url)
+            .then((res) => {
+                return res.json()
+            })
+            .then((data) => {
+
+                // console.log(data);
+
+                data.forEach((item) => {
+
+                    console.log("----------------------------------------------------");
+
+                    let keys = ["latitude", "longitude", "id"];
+
+                    let validDataOnly = true;
+                    for (let key in keys) {
+                        if (!item.hasOwnProperty(keys[key])) {
+                            validDataOnly = false;
+                            console.log("Missing: " + keys[key])
+                        }
+                    }
+
+                    console.log("validDataOnly: " + validDataOnly);
+
+                    if (validDataOnly) {
+                        showData(item);
+                    } else {
+                        // showData(item);
+
+                    }
+
+                });
+
+                console.log("Initiating InitMap()");
+                initMap();
+            });
+    }
+</script>
+
+<script>    //Main Script
+    const endpoint = "https://data.cityofchicago.org/resource/ydr8-5enu.json";
+
+    const temp = document.querySelector(".template");
+    const select = document.querySelector("#dropdown");
+
+    const data = document.querySelector('#data');
+
+    const enCollator = new Intl.Collator('en');
+    const comparator = enCollator.compare;
+
+    let nameList = new Array();
+    let options = new Array();
+
+    // init select
+    window.addEventListener('load', function () {
+        // let home = document.querySelector("#home");
+        // home.focus();
+
+        fetch(endpoint + "?$LIMIT=500")
+            .then((res) => { return res.json() })
+            .then((data) => {
+                // console.log(data);
+                let divData = document.createElement("div");
+                data.forEach((item) => {
+
+                    if (!(nameList.includes(item.contact_1_name)) && (item.contact_1_name != undefined)) {
+
+                        // console.log(nameList)
+
+                        let addr = [item.street_number, item.street_direction, item.street_name, item.suffix, item.contact_1_city, item.contact_1_state, item.contact_1_zipcode].join(' ');
+                        let info = ["Address: " + addr, "Pin: " + item.pin1, "Community Area: " + item.community_area, "Coordinates: " + `[${item.xcoordinate},${item.ycoordinate}]`];
+                        nameList.push(item.contact_1_name);
+
+                        let clone = temp.cloneNode(true);
+                        let br = document.createElement("br");
+                        br.classList.add('results');
+
+                        let h5 = clone.querySelector(".card-title");
+                        h5.innerText = item.contact_1_name;
+
+                        let name = item.contact_1_name.replace(/[. ,/&]/g, ""); //for valid class name adding
+
+                        let list = clone.querySelector("#list");
+                        let listItem = document.createElement("li");
+                        listItem.innerText = (addr);
+                        listItem.classList.add("list-group-item");
+                        listItem.classList.add(name);
+                        list.append(listItem);
+                        // let allData = document.querySelector("#allData");
+                        divData.appendChild(br);
+                        divData.appendChild(clone);
+                        clone.classList.remove("template");
+                        clone.classList.add("allData");
+
+                    } else if (nameList.includes(item.contact_1_name) && item.contact_1_name != undefined) {
+                        let addr = [item.street_number, item.street_direction, item.street_name, item.suffix, item.contact_1_city, item.contact_1_state, item.contact_1_zipcode].join(' ');
+                        let name = item.contact_1_name.replace(/[. ,/&]/g, ""); //for valid class name adding
+                        let list = divData.querySelectorAll("." + name);
+                        let included = false;
+                        for (let i = 0; i < list.length; i++) {
+                            if (list[i].innerText == addr) {
+                                included = true;
+                            }
+                        }
+                        if (included == false) {
+                            let listItem = document.createElement("li");
+                            listItem.innerText = addr;
+                            listItem.classList.add("list-group-item");
+                            listItem.classList.add(name);
+                            // console.log(list[0].parentElement);
+                            list[0].parentElement.append(listItem);
+                        }
+                    }
+                });
+
+                let allData = document.querySelector("#allData");
+                allData.appendChild(divData);
+
+                nameList.forEach((name) => {
+                    let optionObj = document.createElement("option");
+                    optionObj.textContent = name;
+                    select.appendChild(optionObj);
+                });
+
+                let optionNodes = Array.from(select.children);
+                options = optionNodes.slice(1, optionNodes.length);
+
+
+
+                options.sort((a, b) => comparator(a.textContent, b.textContent));
+                options.forEach((option) => select.appendChild(option));
+            });
+    });
+
+</script>
+
+
 
 </html>
