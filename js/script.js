@@ -1,5 +1,4 @@
 const endpoint = "https://data.cityofchicago.org/resource/ydr8-5enu.json";
-let url = endpoint + "?";
 
 const temp = document.querySelector(".template");
 const select = document.querySelector("#dropdown");
@@ -18,7 +17,7 @@ window.addEventListener('load', function () {
     // home.focus();
 
 
-    fetch(endpoint)
+    fetch(endpoint + "?$LIMIT=50")
         .then((res) => { return res.json() })
         .then((data) => {
 
@@ -83,7 +82,7 @@ window.addEventListener('load', function () {
                         listItem.innerText = addr;
                         listItem.classList.add("list-group-item");
                         listItem.classList.add(name);
-                        console.log(list[0].parentElement);
+                        // console.log(list[0].parentElement);
 
                         list[0].parentElement.append(listItem);
                     }
@@ -91,7 +90,7 @@ window.addEventListener('load', function () {
             });
 
             let allData = document.querySelector("#allData");
-            
+
             allData.appendChild(divData);
 
 

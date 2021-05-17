@@ -1,41 +1,79 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Simple Map</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <style type="text/css">
-      /* Always set the map height explicitly to define the size of the div
+
+<head>
+  <title>Simple Map</title>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <script src="js\script.js" type="module"></script>
+
+  <style type="text/css">
+    /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
-      #map {
-        height: 100%;
-      }
+    #map {
+      height: 100%;
+    }
 
-      /* Optional: Makes the sample page fill the window. */
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-    <script>
-      let map;
+    /* Optional: Makes the sample page fill the window. */
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <script>
+    let map;
+    let lats = [];
+    let lngs = [];
+    lats.push(-25);
+    lngs.push(131.044);
 
-      function initMap() {
-        map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: -34.397, lng: 150.644 },
-          zoom: 8,
-        });
-      }
-    </script>
-  </head>
-  <body>
-    <div id="map"></div>
+    function initMap() {
+      map = new google.maps.Map(document.querySelector('#map'), {
+        zoom: 4,
+        center: {
+          lat: lats[0],
+          lng: lngs[0]
+        }
+      });
+      console.log("Selected MyMap by ID");
 
-    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkr4zEzGfBhNPoLP-6uFdsVfPIQ3FjkDw&callback=initMap&libraries=&v=weekly"
-      async
-    ></script>
-  </body>
+      // for (let i of lats) {
+      let contentString = '<div id="content">' + "  placeholder text  " + "</div>";
+
+      let infowindow = new google.maps.InfoWindow({
+        content: contentString
+      });
+
+      console.log("lats: " + lats); 
+
+
+      let marker = new google.maps.Marker({
+
+
+        position: new google.maps.LatLng(lats[0], 131.044),
+        map: map,
+        title: "MyMap"
+      });
+      marker.addListener('click', () => {
+        console.log("Opened InfoWindow!");
+
+        infowindow.open(map, marker);
+      });
+
+      // }
+      console.log("All Markers Added");
+    }
+  </script>
+</head>
+
+<body>
+  <div id="map"></div>
+
+  <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkr4zEzGfBhNPoLP-6uFdsVfPIQ3FjkDw&callback=initMap&libraries=&v=weekly"
+    async></script>
+</body>
+
 </html>

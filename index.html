@@ -7,18 +7,25 @@
     <title>My App Shell</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <script src="js\search.js" type="module"></script>
+    <script src="js\script.js" type="module"></script>
 
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.2/proj4.js"
+        integrity="sha512-xDJcBRHFtyIAwCxC+w+BUE8S20UdKmyHA/ZoHKZ9zgwSfQQxdgCH/5Q0i9qrsBJFZQRjy1tSmqw8VGlrEy85MQ=="
+        crossorigin="anonymous"></script> -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 
+
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <script src="js/index.js"></script>
+    <script src="js/map.js"></script>
 
 
 
@@ -57,7 +64,8 @@
             width: 75%;
         }
 
-        .results, .allData {
+        .results,
+        .allData {
             display: block;
         }
 
@@ -94,7 +102,7 @@
 
     <div class="content" id="content">
 
-        <div class="screen" id="home"> <strong>Home Page</strong> </div>
+        <div class="screen" id="home" tabindex="0"> <strong>Home Page</strong> </div>
 
         <div class="screen" id="data"> <strong>Data Page</strong>
 
@@ -120,14 +128,31 @@
                 <div class="card template">
                     <div class="card-body">
                         <h5 class="card-title">Placeholder</h5>
-                        <ul id="list" class="list-group list-group-flush" style="font-size: small; text-align: left;"></ul>
+                        <ul id="list" class="list-group list-group-flush" style="font-size: small; text-align: left;">
+                        </ul>
                     </div>
                 </div>
             </div>
 
 
             <script>
+                let map;
+                let markers = [];
+                let lats = [];
+                let lngs = [];
+                let addrArr = [];
+                let x, y;
+
+
                 function filter() {
+
+                    deleteMarkers();
+                    markers = [];
+                    lats = [];
+                    lngs = [];
+                    addrArr = [];
+                    x, y;
+
 
                     var results = document.querySelectorAll('.results');
 
@@ -135,7 +160,7 @@
 
                     let select = document.querySelector("#dropdown");
                     let selection = encodeURI(select.value);
-                    let url = endpoint + "?contact_1_name" + "=" + selection;
+                    let url = endpoint + "?contact_1_name" + "=" + selection + "&$LIMIT=5";
                     var temp = document.querySelector(".template");
 
                     fetch(url)
@@ -143,30 +168,64 @@
                             return res.json()
                         })
                         .then((data) => {
+
+                            // console.log(data);
+
+
                             data.forEach((item) => {
-                                let clone = temp.cloneNode(true);
-                                let br = document.createElement("br");
-                                br.classList.add('results');
 
-                                let h5 = clone.querySelector(".card-title");
-                                h5.innerText = item.contact_1_name;
+                                console.log("----------------------------------------------------");
 
-                                let list = clone.querySelector("#list");
-                                let addr = [item.street_number, item.street_direction, item.street_name, item.suffix, item.contact_1_city, item.contact_1_state, item.contact_1_zipcode].join(' ');
-                                let info = ["Address: " + addr, "Pin: " + item.pin1, "Community Area: " + item.community_area, "Coordinates: " + `[${item.xcoordinate},${item.ycoordinate}]`];
+                                let keys = ["latitude", "longitude", "id"];
 
-                                for (k in info) {
-                                    let listItem = document.createElement("li");
-                                    listItem.innerText = (info[k]);
-                                    list.append(listItem);
-                                    listItem.classList.add("list-group-item");
+                                let validDataOnly = true;
+                                for (let key in keys) {
+                                    if (!item.hasOwnProperty(keys[key])) {
+                                        validDataOnly = false;
+                                        console.log("Missing: " + keys[key])
+                                    }
                                 }
 
-                                temp.parentElement.appendChild(br);
-                                temp.parentElement.appendChild(clone);
-                                clone.classList.remove("template");
-                                clone.classList.add("results");
+                                console.log("validDataOnly: " + validDataOnly);
+
+                                if (validDataOnly) {
+
+                                    let clone = temp.cloneNode(true);
+                                    let br = document.createElement("br");
+                                    br.classList.add('results');
+
+                                    let h5 = clone.querySelector(".card-title");
+                                    h5.innerText = item.contact_1_name;
+
+                                    let list = clone.querySelector("#list");
+                                    x = parseFloat(Math.round(`${item.latitude}` * 1000) / 1000);
+                                    y = parseFloat(Math.round(`${item.longitude}` * 1000) / 1000);
+
+                                    let addr = [item.street_number, item.street_direction, item.street_name, item.suffix, item.contact_1_city, item.contact_1_state, item.contact_1_zipcode].join(' ');
+                                    let info = ["Address: " + addr, "Pin: " + item.pin1, "Community Area: " + item.community_area, "Coordinates: " + `[${x},${y}]`];
+
+                                    for (k in info) {
+                                        let listItem = document.createElement("li");
+                                        listItem.innerText = (info[k]);
+                                        list.append(listItem);
+                                        listItem.classList.add("list-group-item");
+                                    }
+
+                                    temp.parentElement.appendChild(br);
+                                    temp.parentElement.appendChild(clone);
+                                    clone.classList.remove("template");
+                                    clone.classList.add("results");
+
+                                    addrArr.push(addr);
+                                    lats.push(x);
+                                    lngs.push(y);
+
+                                }
+
                             });
+
+                            console.log("Initiating InitMap()");
+                            initMap();
                         });
                 }
             </script>
@@ -187,21 +246,21 @@
         </div>
 
 
-        <div class="screen" id="map">
+        <div class="screen" id="map" style="display: block">
 
             <div id="map-wrapper">
                 <div id="map-canvas"></div>
             </div>
             <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-            <script async
-                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkr4zEzGfBhNPoLP-6uFdsVfPIQ3FjkDw&callback=initMap">
-                </script>
+            <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkr4zEzGfBhNPoLP-6uFdsVfPIQ3FjkDw">
+            </script>
         </div>
+    </div>
 
 
-        <script>
-            let endpoint = "https://data.cityofchicago.org/resource/ydr8-5enu.json";
-            let temp = document.querySelector(".template");
+    <script>
+        let endpoint = "https://data.cityofchicago.org/resource/ydr8-5enu.json";
+        let temp = document.querySelector(".template");
             // var filtered;
 
             // fetch(endpoint)
@@ -221,9 +280,9 @@
             //             clone.classList.remove("template");
             //         })
             //     });
-        </script>
+    </script>
 
-        <!--     <script>
+    <!--     <script>
         let navAnchors = document.querySelectorAll("div.nav-link a");
         navAnchors.forEach((anchor) => {
             anchor.addEventListener("click", (event) => {
