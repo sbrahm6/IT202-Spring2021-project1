@@ -1,9 +1,7 @@
     {
-        "theme_color": "#690505",
-        "background_color": "#690505",
         "display": "standalone",
-        "start_url": "./index.html",
-        "app_name": "Game",
-        "short_name": "Game",
-        "description": "Super Doggo Jumper"
+        "start_url": "./index.html#data",
+        "app_name": "App",
+        "short_name": "App",
+        "description": "App"
     }
